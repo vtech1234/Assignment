@@ -22,7 +22,7 @@ table.*/
   SSQL provide us the facility of natural order on the highly prior column but If we want to change the 
   order . DESC provides us decending order. Here order is  orderd by onum.*/
 
-    select * from orders order by ONUM DESC;
+    select * from orders order by CNUM DESC;
 
 /*----------------------------------------------------------------------------------------------------
 5) Find which salespeople currently have orders in the order table.
@@ -33,11 +33,14 @@ table.*/
 
    select SNUM  from orders GROUP BY SNUM;
 /*----------------------------------------------------------------------------------------------------
-6) List names of all customers matched with the salespeople serving them
+6) List names of all customers matched with the salespeople serving them.
   when i was dealing with this query .there is a problem for the result set because data retrieved from 
   both tables.*/
   
    select customer.CNUM,customer.CNAME,customer.CITY,customer.RATING,customer.SNUM from customer inner
+ join salespeople on salespeople.SNUM = customer.SNUM;
+
+select customer.CNUM,customer.CNAME,customer.CITY,customer.RATING,customer.SNUM from customer left
  join salespeople on salespeople.SNUM = customer.SNUM;
 
 /*-----------------------------------------------------------------------------------------------------
@@ -47,6 +50,8 @@ table.*/
 have to think that i can be tricky. */
 
  select count(*) AS COUNT ,c.SNUM,s.SNAME from customer c,salespeople s WHERE c.SNUM=s.SNUM GROUP BY c.SNUM ;
+
+ select count(*) AS COUNT ,c.SNUM,s.SNAME from customer c,salespeople s WHERE c.SNUM=s.SNUM GROUP BY c.SNUM HAVING COUNT>1;
 /*-----------------------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------------------------------
 8) Count the orders of each of the salespeople and output the results in descending order
@@ -59,13 +64,19 @@ of thables. In 3rd i used JOINS .*/
  select count(*) AS count , o.SNUM FROM orders o,customer c,salespeople s where o.SNUM=c.SNUM AND c.SNUM=s.SNUM GROUP BY SNUM DESC;
 
  select count(*) AS count , orders.SNUM FROM orders JOIN customer ON orders.SNUM=customer.SNUM JOIN salespeople ON customer.SNUM=salespeople.SNUM   GROUP BY SNUM DESC;
-/*-----------------------------------------------------------------------------------------------------------
+/* joins provide best way to retriev data from two or more tables and group by gather same type of data so that i can be counted.
+
+
+-----------------------------------------------------------------------------------------------------------
+9) List the customer table if and only if one or more of the customers in the Customer table are located in SanJose.
+select * from customer WHERE CITY='Sanjose';
 ------------------------------------------------------------------------------------------------------------
 10) Match salespeople to customers according to what city they live in.
    Here i got new thing that is 'AS' which is change the column name during query exicution and set the name as required.
    Here i used three tables and i learnt that how to connect more then two table  and how to denormalization is performed.*/
 
    SELECT customer.CNAME AS customers,salespeople.SNAME AS Salespeople, salespeople.CITY FROM customer JOIN salespeople ON customer.CITY=salespeople.CITY;
+   SELECT c.CNAME AS customers,s.SNAME AS Salespeople, s.CITY FROM customer c, salespeople s where c.CITY=s.CITY;
 
 /*------------------------------------------------------------------------------------------------------------
 11) Find all the customers in SanJose who have a rating above 200.
@@ -81,6 +92,7 @@ of thables. In 3rd i used JOINS .*/
 13) List all the orders of Salesperson Motika from the orders table
     here I retrieved data from both the tables by using join. Here join works by defoult like inner join .
     data got on the basic of 'Motika' salespeople.*/
+SELECT * FROM orders JOIN salespeople ON salespeople.SNAME='Motika' AND orders.SNUM=salespeople.SNUM ;right
 
 SELECT * FROM orders JOIN salespeople ON salespeople.SNAME='Motika';
 
@@ -97,7 +109,8 @@ the maximum Amount.
    but i had to take more then 2000 and 2000 . I tried lots of operator for this which provided me only boolean value not actual value.
    
    so how can i done this task? */
-select SUM(ATM) AS SUM ,ODATE FROM orders GROUP BY ODATE;
+select SUM(ATM) AS SUM ,ODATE FROM orders GROUP BY ODATE HAVING SUM>2000 ORDER BY SUM DESC ;
+select SUM(ATM) AS SUM ,ODATE FROM orders GROUP BY ODATE ORDER BY SUM DESC;
 
 /*---------------------------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------------------------
@@ -113,8 +126,6 @@ select ONUM, MAX(ATM) AS Amount,ODATE,CNUM,SNUM FROM orders WHERE  ODATE='1990-0
    table. Subquery also work like joins .here i retrieved data from customer where salespeople is Serres and i add 1000 
    to sarres id because customer id is in term of 2000. */
 
- select * from customer inner join salespeople where customer.CNUM=salespeople.SNUM+1000;
-
  select * from customer WHERE CNUM>(select SNUM from salespeople WHERE SNAME='Serres')+1000;
 
 /*-------------------------------------------------------------------------------------------------------
@@ -124,4 +135,5 @@ select ONUM, MAX(ATM) AS Amount,ODATE,CNUM,SNUM FROM orders WHERE  ODATE='1990-0
 the be half of  eliminating those Maximum orders, which are less than 3000.*/
 
 select SNUM, MAX(ATM) AS amount, ODATE  from orders Where ATM>3000 GROUP BY SNUM;
+
 /*-------------------------------------------------------------------------------------------------------*/

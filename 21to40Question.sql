@@ -1,12 +1,18 @@
 /*-------------------------------------------------------------------------------------------------------
 21) List all the largest orders for October 3, for each salesperson.*/
+
+ select MAX(ATM) AS ATMMAX , o.SNUM  from orders o, salespeople s WHERE o.SNUM=s.SNUM AND o.ODATE='1990-03-10' GROUP BY s.SNUM;
+ select MAX(ATM) AS ATMMAX , orders.SNUM  from orders INNER JOIN salespeople  WHERE orders.SNUM=salespeople.SNUM AND orders.ODATE='1990-03-10' GROUP BY salespeople.SNUM;
  select * from salespeople where SNUM IN (select SNUM from customer GROUP BY SNUM HAVING COUNT(*));
 
 /*-------------------------------------------------------------------------------------------------------
 22) Find all customers located in cities where Serres has customers.
     here i query with subquery in this task where i had to take city from salespeople where salespeople anme is serres .*/ 
+
 select * from customer where CITY=(select CITY FROM salespeople where salespeople.SNAME='Serres');
-/*-------------------------------------------------------------------------------------------------------
+
+/* i used sub query because i had to take city from salespeople serres.
+-------------------------------------------------------------------------------------------------------
 23) Select all customers with a rating above 200.
     select * from customer where RATING>200;
 /*-------------------------------------------------------------------------------------------------------
@@ -82,7 +88,7 @@ select CNUM, CNAME,RATING from customer where RATING>=(select avg(RATING) from c
 36) Write a query that totals the orders for each day and places the results in descending order.
     here i write a query for getting the total of atm date wise and order them into date wise.*/
 
-    select SUM(ATM) AS TOTAL , ODATE from orders GROUP BY ODATE  DESC;
+    select SUM(ATM) AS TOTAL , ODATE from orders GROUP BY ODATE  ORDER BY ODATE DESC;
 /*---------------------------------------------------------------------------------------------------------------------------------------
 37) Write a select command that produces the rating followed by the name of each customer in SanJose.
   */ 
